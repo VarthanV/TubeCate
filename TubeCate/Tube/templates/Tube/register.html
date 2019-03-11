@@ -1,0 +1,43 @@
+{% extends "Tube/base.html" %}
+{% load crispy_forms_tags %}
+<script>
+ document.getElementById('btn').addEventListener('submit',welcome)   
+ function welcome(){
+    swal({
+        title: "Welcome",
+        text: "You have been registered Successfully",
+        icon: "success",
+        button: "Ok",
+      });
+}   
+    
+    
+
+</script>
+
+{% block content%}
+<div id="reg">
+<div class="container">
+
+            <div class="content-section mt-3">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <fieldset class="form-group">
+                            <legend class="border-bottom mb-4">Register</legend>
+                            {{ form|crispy }}
+                        </fieldset>
+                        <div class="form-group mt-3">
+                            <button class="btn btn-outline-info" id="btn"> Register</button>
+                        </div>
+                      </form>
+                      </div>
+                      </div>
+                      </div>
+                      </div>
+{% endblock %}                         
+                
+
+    
+    
+
+

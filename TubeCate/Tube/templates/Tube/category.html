@@ -1,0 +1,47 @@
+{% extends "Tube/base.html"%}
+{% load staticfiles %}
+{% block content %}
+<style>
+body{
+  padding: 50px;
+  margin: 50px;
+  background-image: linear-gradient(#74ebd5,#ACB6E5)
+
+}
+</style>
+ <form method="GET" class="form-inline row justify-content-center mt-3">
+    <div class="row justify-content-center mt-3 mb-3" style="width:30rem;">
+    <input class="form-control col-7" placeholder="Search Category" value="{{request.GET.tag}}" name="tag">
+    <button type="submit" class="btn btn-success ml-2 col-3">Search</button>
+    </div>
+</form>
+
+{% if clans == None %}
+<h4 class="mt-2 mb-2">No results found</h4>
+{% elif request.GET.tag == "" %}
+<h4 class="mt-2 mb-2">Enter a search term</h4>
+{% else %}
+<h4 class="mt-2 mb-3">Results for '{{request.GET.tag}}'</h4>
+{% for clan in clans %}
+<div class="card mt-2 mb-3">
+    <div class="card-header">
+        <img src="{% static 'Tube/default.jpg' %}" class="avatar">
+       <span><big> <a href="{% url 'profile-view' clan.leader.pk %}?tab=packs" style="color:black;">{{ clan.leader }}</a></big></span>
+      
+    </div>
+    <div class="card-body">
+        <h5 class="card-title"><a href="{% url 'detail-view' clan.pk %}" style="color:black;">{{ clan.name }}</a></h5>
+        <p class="card-text">{{ clan.description }}</p>
+        <b>Links:</b> <span>{{ clan.link_set.all.count }}</span> 
+        <div class="mt-2">
+            <span><b>Category:</b></span>
+       
+            <a href="{% url 'category-view' %}?tag={{clan.tag}}" class="badge badge-pill badge-success">{{clan.tag}}</a>
+         
+        </div>
+    </div>
+      
+</div>
+{% endfor %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "Tube/base.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+<div class="content-section mt-3">
+    <form method="POST">
+        {% csrf_token %}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Comments({{clan.comment_set.all.count}})</legend>
+            
+        </fieldset>
+        <div class="form-group mt-3">
+            {{ form|crispy }}
+            <span class="mr-2">
+                <button class="btn btn-info" type="submit">Confirm</button>
+            </span>
+            
+          
+            
+        </div>
+    </form>
+
+    </div>
+</div>
+{% endblock %}

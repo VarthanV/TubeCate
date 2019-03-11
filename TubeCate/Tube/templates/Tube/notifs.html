@@ -1,0 +1,133 @@
+{% extends 'Tube/base.html'%}
+{% load staticfiles %}
+{% block content %}
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<script>
+        function del(pk){
+            var url = window.location.protocol+'//'+window.location.hostname+':'+window.location.port+'/notifs/remove/';
+            var request = new XMLHttpRequest();
+            request.open('POST',url);
+            request.onload = ()=>{
+                if(request.status == 200){
+                    var response = JSON.parse(request.responseText);
+                    if(response['removed']){
+                        elem = document.getElementById('notif-'+pk);
+                        elem.parentNode.removeChild(elem);
+                        count = parseInt(document.getElementById('notifs-len').innerHTML);
+                        count--;
+                        document.getElementById('notifs-len').innerHTML = count;
+                        document.getElementById('nav-notif-len').innerHTML = count;   
+                    }
+                }
+            };
+            request.send(JSON.stringify({'pk':pk}));
+        }
+        function delAll(){
+            var url = window.location.protocol+'//'+window.location.hostname+':'+window.location.port+'/notifs/remove/all/';
+            var request = new XMLHttpRequest();
+            request.open('POST',url);
+            request.onload = ()=>{
+                if(request.status == 200){
+                    var response = JSON.parse(request.responseText);
+                    if(response['removed']){
+                        elem = document.getElementById('all-notifs');
+                        elem.parentNode.removeChild(elem);
+                        document.getElementById('notifs-len').innerHTML = 0;
+                        document.getElementById('nav-notif-len').innerHTML = 0;
+                    }
+                }
+            };
+            request.send();
+        }
+        </script>
+
+
+<div class="mt-2 border-bottom pb-2 mt-3">
+    <span class="ml-2" style="font-size:22px;">Notifications(<span id="notifs-len">{{notifs|length}}</span>)</span>
+    <span class="float-right mr-2"><button class="btn btn-danger" onclick="delAll()" style="font-size: 15px">CLEAR</button></span>
+</div>
+<div id="all-notifs">
+{% for notif in notifs %}
+{% if notif.liked %}
+<div class="row justify-content-center pl-3 pr-3 mt-3" id="notif-{{notif.pk}}">
+        <div class="card" style="width:40rem;">
+        <div class="card-header" style="height:1cm">
+                <span class="float-right text-muted"><small>{{ notif.date|date:"D d M Y" }}</small></span>
+        </div>
+        <div class="card-body">
+        <span><img src="{% static 'Tube/default.jpg' %}" class="avatar"></span>
+        <span><big><a href="{% url 'profile-view' notif.sender.pk %}?tab=packs" style="color:black;">{{notif.sender}}</a></big></span>
+        <span class="ml-1"><b>Liked your</b></span>
+        <span><b><a href="{% url 'detail-view' notif.clan.pk %}">clan</a></b></span>
+        <span class="float-right mt-1">
+            <button onclick="del('{{notif.pk}}')" class="button2">
+                <i class="material-icons" style="color:red; font-size:27px;">highlight_off</i>
+            </button>
+        </span>
+    </div>
+</div>
+</div>
+{% elif notif.joined %}
+<div class="row justify-content-center pl-3 pr-3 mt-3" id="notif-{{notif.pk}}">
+<div class="card" style="width:40rem;">
+    <div class="card-header" style="height:1cm;">
+        <span class="float-right text-muted"><small>{{ notif.date|date:"D d M Y" }}</small></span>
+    </div>
+    <div class="card-body">
+      <span><img src="{% static 'Tube/default.jpg' %}" class="avatar"></span>
+      <span><big><a href="{% url 'profile-view' notif.sender.pk %}?tab=clans" style="color:black;">{{notif.sender}}</a></big></span>
+      <span class="ml-1"><b>joined your</b></span>
+      <span><b><a href="{% url 'detail-view' notif.clan.pk %}">{{notif.clan.name}}</a></b></span>
+      <span class="float-right mt-1">
+          <button onclick="del('{{notif.pk}}')" class="button2">
+                <i class="material-icons" style="color:red; font-size:27px;">highlight_off</i>
+          </button>
+      </span>
+    </div>
+</div>
+</div>
+{% elif notif.followed %}
+<div class="row justify-content-center pl-3 pr-3 mt-3" id="notif-{{notif.pk}}">
+        <div class="card" style="width:40rem;">
+            <div class="card-header" style="height:1cm;">
+                <span class="float-right text-muted"><small>{{ notif.date|date:"D d M Y" }}</small></span>
+            </div>
+            <div class="card-body">
+              <span><img src="{% static  'Tube/default.jpg' %}" class="avatar"></span>
+              <span><big><a href="{% url 'profile-view' notif.sender.pk %}?tab=packs" style="color:black;">{{notif.sender}}</a></big></span>
+              <span class="ml-1"><b>Followed you</b></span>
+              <span class="float-right mt-1">
+                  <button onclick="del('{{notif.pk}}')" class="button2">
+                        <i class="material-icons" style="color:red; font-size:27px;">highlight_off</i>
+                  </button>
+              </span>
+            </div>
+        </div>
+        </div>
+
+{% elif notif.liked %}
+<div class="row justify-content-center pl-3 pr-3 mt-3" id="notif-{{notif.pk}}">
+        <div class="card" style="width:40rem;">
+            <div class="card-header" style="height:1cm;">
+                <span class="float-right text-muted"><small>{{ notif.date|date:"D d M Y" }}</small></span>
+            </div>
+            <div class="card-body">
+              <span><img src="{% static 'Tube/default.jpg'%}" class="avatar"></span>
+              <span><big><a href="{% url 'profile-view' notif.sender.pk %}?tab=packs" style="color:black;">{{notif.sender}}</a></big></span>
+              <span class="ml-1"><b>liked your</b> {{notif.clan.name}}</span>
+              <span class="float-right mt-1">
+                  <button onclick="del('{{notif.pk}}')" class="button2">
+                        <i class="material-icons" style="color:red; font-size:27px;">highlight_off</i>
+                  </button>
+              </span>
+            </div>
+        </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+
+{% endblock %}
+
+
+

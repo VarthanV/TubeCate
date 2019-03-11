@@ -1,0 +1,37 @@
+{% extends "Tube/base.html" %}
+{% load crispy_forms_tags %}
+<script>
+ document.getElementById('btn').addEventListener('submit',welcome)   
+ function welcome(){
+    swal({
+        title: "Welcome",
+        text: "Welcomeback to TubeCate",
+        icon: "success",
+        button: "Ok",
+      });
+}   
+    
+    
+
+</script>
+<style>
+   
+</style>
+{% block content%}
+<div class="container">
+    
+            <div class="content-section mt-3">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <fieldset class="form-group">
+                            <legend class="border-bottom mb-4">Login</legend>
+                            {{ form|crispy }}
+                        </fieldset>
+                        <div class="form-group mt-3">
+                            <button class="btn btn-outline-info" id="btn"> Login</button>
+                        </div>
+                      </form>
+                      </div>
+                      </div>
+                      </div>
+{% endblock %}                            

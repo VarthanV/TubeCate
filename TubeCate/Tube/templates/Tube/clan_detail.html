@@ -1,0 +1,391 @@
+{% load staticfiles%}
+{% load crispy_forms_tags %}
+<html>
+     
+   <script>
+      function Join( pk){
+       var url=window.location.protocol+'//'+window.location.hostname+':'+window.location.port+'/join/';
+       var request= new XMLHttpRequest();
+       request.open('POST',url);
+       request.onload= ()=>{
+           if(request.status==200){
+               var response=JSON.parse(request.responseText);
+            
+               if(response['joined']){
+                 
+                   document.getElementById('btn').classList.replace('  btn-outline-success', 'btn-outline-danger');
+                   document.getElementById('text').innerText="Leave";
+                   swal({
+        title: "Welcome",
+        text: "Welcome to" + response['name'],
+        icon: "success",
+        button: "Ok",
+      });
+               }
+           else{
+              
+          
+               document.getElementById('btn').classList.replace('btn-outline-danger','btn-outline-success');
+               document.getElementById('text').innerText="Join";
+              }
+           }
+           
+         
+      
+       };
+       request.send(JSON.stringify({'pk':pk}));
+       }
+          
+      
+      
+      
+      function like(pk){
+      var url=window.location.protocol+'//'+window.location.hostname+':'+window.location.port+'/like/';
+      var request=new XMLHttpRequest();
+      request.open('POST',url);
+      request.onload=()=>{
+      if(request.status==200){
+        var response=JSON.parse(request.responseText);
+        var count=parseInt(document.getElementById('like-count').innerHTML)
+       if(response['liked']){
+           count++;
+           document.getElementById('like-button').innerHTML='favorite';
+           document.getElementById('like-count').innerHTML=count;
+       } 
+        
+      else{
+           count--;
+           document.getElementById('like-button').innerHTML='favorite_border';
+           document.getElementById('like-count').innerHTML=count;
+       } 
+      }
+      };
+      request.send(JSON.stringify({'pk':pk}))
+      }
+      
+      
+      
+       
+      
+      
+       
+      
+   </script>
+   <head>
+         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+         <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+      <link href="https://fonts.googleapis.com/css?family=Libre+Franklin" rel="stylesheet">
+      <script src="{% static 'Tube/script.js'%}"></script>
+      <link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+      <style>
+         .avatar {
+         vertical-align: middle;
+         width: 50px;
+         height: 50px;
+         border-radius: 50%;
+         }
+         body{
+         padding: 20px;
+         margin: 50px;
+         background-image: linear-gradient(#0f0c29,#302b63,#24243e)
+         }
+         #like-button{
+         background: none;
+         color: inherit;
+         border: none;
+         padding: 0;
+         font: inherit;
+         cursor: pointer;
+         outline: inherit;
+         }
+         a:focus{
+         outline: none;
+         }
+      </style>
+      <title> Tube Cate</title>
+   </head>
+   
+   <body>
+      <div class="container">
+         <nav class="navbar navbar-expand-xl navbar-dark fixed-top bg-dark">
+            <a class="navbar-brand" href="{% url 'home'%}">TubeCate</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+               <ul class="navbar-nav">
+                  <li class="nav-item active">
+                     <a class="nav-link" href="{% url 'home'%}">Home <span class="sr-only">(current)</span></a>
+                  </li>
+                  <li class="nav-item">
+                     <a class="nav-link" href="#">ExploreClans</a>
+                  </li>
+                  <li class="nav-item">
+                     <a class="nav-link" href="#">About</a>
+                  </li>
+               </ul>
+            </div>
+            {% if user.is_authenticated%}
+            <ul class="navbar-nav mr-auto">
+               <li class="nav-item">
+                  <a class="nav-link" href="{% url 'clan-create'%}">
+                  NewClan
+                  </a>
+               </li>
+               <li class="nav-item">
+                  <a class="nav-link" href="{% url 'notifs'%}">
+                  Notifications
+                  <span class="badge badge-secondary" id="nav-notif-len">{{user.receivers_set.all.count}} </span>
+                  </a>
+               </li>
+               <li class="nav-item">
+                  <a class="nav-link" href="{% url 'profile-view' user.pk%}">
+                  Profile
+                  </a>
+               </li>
+               <li class="nav-item">
+                  <a class="nav-link" href="{% url 'logout'%}">
+                  LogOut
+                  </a>
+               </li>
+               <div class="justify-content-end mr-2">
+                  <ul class="navbar-nav">
+                     <li class="nav-item active">
+                        <a class="nav-link active" href="#">
+                        <span><img src="{% static 'Tube/default.jpg'%}" class="avatar1" style="width:25px;height:25px;" ></span>
+                        <span> {{user}}</span>
+                        </a>
+                     </li>
+                  </ul>
+            </ul>
+            {% else%}
+            <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+            <a class="nav-link" href="{%url 'login'%}">
+            Login
+            </a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link" href="{% url 'register'%}">
+            Register
+            </a>
+            </li>
+            {%endif%}
+         </nav>
+         <div class="container">
+         <div class="card">
+         <div class="card-body">
+         <div class="text-center mb-3">
+         <h1 style="font-family:Indie Flower,cursive;"> {{clan.name}}</h1>
+         <div class="text-center mt-3">
+         <iframe width="1000" height="400" src="{{clan.url}}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+         </div> 
+         <div class="text-center mt-2">
+         <p class="lead"> Clan created by <img src="{% static 'Tube/default.jpg'%}" class="avatar"> <a href="{% url 'profile-view' clan.leader.pk %}"> {{clan.leader}}</a></p>
+         </div>
+
+      <a href="{% url 'category-view' %}?tag={{clan.tag}}" class="badge badge-pill badge-success">{{clan.tag}}</a>
+         {% if user == clan.leader%}
+         <div class="row">
+         <div class="col-sm">
+            <a class="btn btn-info" href="{% url 'clan-edit' clan.pk%}"> Edit</a>
+            <a class="btn btn-danger" href="{% url 'clan-delete' clan.pk %}"> Delete</a>
+           
+            {% else %}
+            <div class="row">
+             <div class="col-sm">
+
+
+         {% if user in clan.likes.all %}
+         <button onclick="like('{{clan.pk}}')" type="button">
+         <i  class="material-icons" style="font-size:20px; color:red;" id="like-button">favorite</i>
+         <span id="like-count" style="size:20px;">{{clan.likes.all.count}}</span>
+         </button>
+         {% else %}
+         <button onclick="like('{{clan.pk}}')" type="button" >
+         <i  class="material-icons" style="font-size:20px; color:red;" id="like-button"> favorite_border</i>
+         <span id="like-count" style="size:20px;">{{clan.likes.all.count}}</span>
+         </button>
+         {% endif %}
+
+         {% if  user in clan.members.all %}
+         <div class="row">
+         <div class="col-sm">
+         <button class="btn btn-outline-danger" onclick="Join('{{clan.pk}}')"id="btn"> <span id="text"> Leave </span>
+         </div>     
+         </button>
+         {% else %}
+         <button class="btn btn-outline-success" onclick="Join('{{clan.pk}}')" id="btn"> <span id="text">Join</span>
+         </button>
+         </div>
+         </div>
+         {% endif %}
+         {% endif %}
+         
+         
+         
+         
+        
+         
+       
+         <!-- Card tab stuff-->
+         <div class="row justify-content-center">
+         <ul class="nav nav-tabs justify-content-center" style="width:30rem">
+         <li class="nav-item">
+         <a class="nav-link {% if clanview %} active {% endif %}" href="{% url 'detail-view' clan.pk %}?tab=clandata">
+         ClanDetails 
+         </a>
+         </li>
+         <li class="nav-item">
+               <a class="nav-link {% if memberview %} active {% endif %}" href="{% url 'detail-view' clan.pk %}?tab=members">
+               Members <span class="badge badge-secondary"> {{clan.members.all.count}}</span>
+               </a>
+               </li>
+               <li class="nav-item">
+                     <a class="nav-link {% if commentview %} active {% endif %}" href="{% url 'detail-view' clan.pk %}?tab=comments">
+                     Comments <span class="badge badge-secondary"> {{clan.comment_set.all.count}}</span>
+                     </a>
+                     </li>      
+             
+           
+         
+        
+         
+        
+         </ul>
+         
+         </div> 
+         <div class="container">
+         {%if clanview %}
+         <div class="container">
+           <div class="card" >
+              <div class="cardbody">
+              <div class="text-center mt-3">
+                 <h1> Description</h1> 
+               <p class="lead"> {{clan.description}}</p>  
+  
+              </div>
+  
+              </div>
+  
+           </div>
+           <br>
+           <br>
+           <br>
+        <div class="text-center mt-3">
+        <h1> Links Supporting the Material</h1>
+        </div>
+         <div class="container">
+            <div class="card" >
+            <div class="cardbody">
+            <div class="text-center  mt-3">
+               {% for link in clan.link_set.all %}
+               <h1 class="lead"> {{link.title}}</h1>
+               <p class="lead"> {{link.description}}</p> 
+               <a href="{{link.link}}" target="_blank"> {{link.link}} </a>
+
+               {% endfor %}
+               <div class="text-center mt-3">
+               {% if user == clan.leader %}
+               <a class="btn btn-outline-primary" href="{% url 'link-create' clan.pk %}"> AddLink </a>
+               </div>
+               {% endif %}
+              
+               
+             
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
+{% elif memberview %}
+
+{% for member in clan.members.all %}
+<div class="container">
+ <div class="card">
+<div class="card-body">
+<img src="{% static 'Tube/default.jpg' %}" class="avatar"> <a href="{% url 'profile-view'  member.pk%}"> {{member}}</a>
+
+</div>
+
+ </div>  
+</div>
+
+{% endfor %}
+{% elif commentview %}
+
+<div class="content-section mt-3">
+      <form method="POST" action="{% url 'comment' clan.pk %}">
+          {% csrf_token %}
+          <fieldset class="form-group">
+              <legend class="border-bottom mb-4">Comments({{clan.comment_set.all.count}})</legend>
+              
+          </fieldset>
+          <div class="form-group mt-3">
+              {{ form|crispy }}
+              <span class="mr-2">
+                  <button class="btn btn-info" type="submit">Confirm</button>
+              </span>
+              
+            
+              
+          </div>
+      </form>
+  
+      </div>
+  </div>
+
+{% for comment in comments %}
+<div class="container">
+   <div class="text-center mt-3">
+
+
+
+
+</div>
+<div class="card body">
+<h1> 
+   <img src="{%  static 'Tube/default.jpg' %}" class="avatar"> <span> <a href="{% url 'profile-view' clan.leader.pk%}">{{comment.author}}</a>  says</span>  {{comment.title}}</h1>
+<div class="text-center mt-3">
+<p class="lead">
+   {{comment.content}}<br></p>
+   <div class="footer">
+   {{ comment.date}}
+   </div>
+   
+</p>
+<hr>
+
+</div>
+</div>
+
+{% endfor %}
+</div>
+</div>
+</div>
+
+   {% endif %}
+   </div>
+   </div>
+   </div>
+   </div>
+   
+
+         
+
+
+
+         
+         
+
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+   </body>
+</html>

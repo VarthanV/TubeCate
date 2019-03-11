@@ -1,0 +1,42 @@
+ {% extends 'Tube/base.html' %}
+ {% load staticfiles %}
+{% block content %}
+<script>
+    function welcome(){
+    swal({
+        title: "Welcome",
+        text: "Welcome to TubeCate",
+        icon: "success",
+        button: "Ok",
+      });
+}
+</script>
+<style>
+body{
+  background-image: linear-gradient(#B2FEFA,#0ED2F7)
+}
+</style>
+
+<body>
+   
+  {% for clan in clans %}
+  <div class="container">
+  <div class="text-center mt-3">
+<div class="card">
+<div class="card-body">
+<img src="{% static 'Tube/default.jpg' %}" class="avatar"> <a href="{% url 'profile-view' clan.leader.pk %}"> {{clan.leader}}</a> created
+<a href="{% url 'detail-view' clan.pk%}"> {{clan.name}}</a>
+<p class="lead"> {{clan.description}}</p>
+
+</div>
+
+</div>
+
+  </div>
+
+  </div>
+  {% endfor %}
+ 
+</body>
+
+{% endblock %}

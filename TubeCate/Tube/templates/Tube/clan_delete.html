@@ -1,0 +1,17 @@
+{% extends  'Tube/base.html'%}
+{% block content %}
+
+<div class="mt-3">
+<form method="post">
+    {% csrf_token %}
+    <div class="border-bottom mb-3">
+    <h2>Are you sure you want to delete  {{ clan.name }}</h2>
+    </div>
+    <a href="{% url 'detail-view' clan.pk %}" style="text-decoration:none;">
+        <button class="btn btn-secondary mr-2" type="button">Cancel</button>
+    </a>
+    <button class="btn btn-danger" type="submit">Confirm</button>
+</form>
+</div>
+
+{% endblock %}
